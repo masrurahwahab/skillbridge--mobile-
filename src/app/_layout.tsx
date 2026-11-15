@@ -22,6 +22,7 @@ export default function RootLayout() {
           <Stack.Screen name="onboarding/skills" />
           <Stack.Screen name="skill/[id]" />
           <Stack.Screen name="user/[id]" />
+          <Stack.Screen name="post/[id]" />
           <Stack.Screen name="profile/edit" />
           <Stack.Screen name="swap/[id]" />
           <Stack.Screen name="impact" />

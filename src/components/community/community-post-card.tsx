@@ -11,6 +11,7 @@ interface CommunityPostCardProps {
   post: CommunityPostExtended;
   onLike?: (id: string) => void;
   onSave?: (id: string) => void;
+  onComment?: (id: string) => void;
   onAction?: (post: CommunityPostExtended) => void;
 }
 
@@ -30,6 +31,7 @@ export function CommunityPostCard({
   post,
   onLike,
   onSave,
+  onComment,
   onAction,
 }: CommunityPostCardProps) {
   const catStyle =
@@ -99,10 +101,14 @@ export function CommunityPostCard({
             </Text>
           </TouchableOpacity>
 
-          <View style={styles.actionBtn}>
+          <TouchableOpacity
+            style={styles.actionBtn}
+            activeOpacity={0.7}
+            onPress={() => onComment?.(post.id)}
+          >
             <MessageCircle size={18} color={Palette.textMuted} />
             <Text style={styles.actionCount}>{post.comments}</Text>
-          </View>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.rightActions}>

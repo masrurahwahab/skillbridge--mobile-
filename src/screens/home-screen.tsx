@@ -75,8 +75,14 @@ export function HomeScreen() {
   const load = useCallback(async () => {
     setError(null);
     try {
+      const postRequest =
+        feedTab === 'following'
+          ? user
+            ? postsService.list({ following: true, pageSize: 10 })
+            : Promise.resolve({ items: [], page: 1, pageSize: 10, total: 0 })
+          : postsService.list({ pageSize: 10 });
       const [remotePosts, remoteDiscover] = await Promise.all([
-        postsService.list({ pageSize: 10 }),
+        postRequest,
         discoverService.getDiscover(),
       ]);
       setPosts(remotePosts.items.map((item) => toPost(item, user?.id)));
@@ -86,7 +92,7 @@ export function HomeScreen() {
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [feedTab, user]);
 
   useFocusEffect(
     useCallback(() => {
@@ -140,7 +146,6 @@ export function HomeScreen() {
 
   const visiblePosts = posts.filter((post) => {
     if (feedTab === 'trending') return post.trending;
-    if (feedTab === 'following') return post.following;
     return true;
   });
 
@@ -253,6 +258,9 @@ export function HomeScreen() {
           <CommunityFeed
             posts={visiblePosts}
             onLike={toggleLike}
+            onComment={(post) =>
+              router.push({ pathname: '/post/[id]', params: { id: post.id } })
+            }
             onAction={() => router.push('/community')}
           />
         ) : null}

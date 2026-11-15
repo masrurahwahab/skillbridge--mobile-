@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import { Check, UserPlus } from 'lucide-react-native';
 import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -29,6 +30,8 @@ type UserProfileScreenProps = {
 export function UserProfileScreen({ userId }: UserProfileScreenProps) {
   const router = useRouter();
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followBusy, setFollowBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -47,6 +50,7 @@ export function UserProfileScreen({ userId }: UserProfileScreenProps) {
         usersService.getReviews(userId, 1, 20),
       ]);
       setProfile(buildUserProfile(publicProfile, posts, reviews));
+      setIsFollowing(publicProfile.isFollowing);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not load this profile.');
     } finally {
@@ -87,6 +91,26 @@ export function UserProfileScreen({ userId }: UserProfileScreenProps) {
   const proposeSwap = () => {
     if (!userId) return;
     router.push({ pathname: '/swap/[id]', params: { id: userId } });
+  };
+
+  const toggleFollow = async () => {
+    if (!userId || followBusy) return;
+    setFollowBusy(true);
+    try {
+      if (isFollowing) {
+        await usersService.unfollow(userId);
+      } else {
+        await usersService.follow(userId);
+      }
+      setIsFollowing((current) => !current);
+    } catch (err) {
+      Alert.alert(
+        'Could not update follow',
+        err instanceof Error ? err.message : 'Please try again.'
+      );
+    } finally {
+      setFollowBusy(false);
+    }
   };
 
   const openSkill = (skill: SkillOption) =>
@@ -141,6 +165,14 @@ export function UserProfileScreen({ userId }: UserProfileScreenProps) {
           />
 
           <View style={styles.actions}>
+            <Button
+              label={isFollowing ? 'Following' : 'Follow'}
+              variant="secondary"
+              icon={isFollowing ? Check : UserPlus}
+              fullWidth
+              disabled={followBusy}
+              onPress={toggleFollow}
+            />
             <Button label="Propose a swap" fullWidth onPress={proposeSwap} />
           </View>
 

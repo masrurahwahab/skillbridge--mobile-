@@ -80,9 +80,22 @@ export function ProfileTabs({ profile, onViewPost }: ProfileTabsProps) {
                     <AppText variant="bodySmall" weight="700">
                       {review.reviewerName}
                     </AppText>
-                    <AppText variant="caption" color={Palette.textMuted}>
-                      {'★'.repeat(Math.round(review.rating))} · {review.timeAgo}
-                    </AppText>
+                    <View style={styles.reviewMeta}>
+                      <View style={styles.reviewStars}>
+                        {Array.from({ length: 5 }, (_, index) => (
+                          <Star
+                            key={index}
+                            color={Palette.warning}
+                            fill={index < Math.round(review.rating) ? Palette.warning : 'none'}
+                            size={11}
+                            strokeWidth={2}
+                          />
+                        ))}
+                      </View>
+                      <AppText variant="caption" color={Palette.textMuted}>
+                        {review.timeAgo}
+                      </AppText>
+                    </View>
                   </View>
                 </View>
                 <AppText variant="bodySmall" color={Palette.text}>
@@ -169,6 +182,16 @@ const styles = StyleSheet.create({
   },
   reviewIdentity: {
     flex: 1,
+    gap: 1,
+  },
+  reviewMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+  },
+  reviewStars: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 1,
   },
   emptyIcon: {

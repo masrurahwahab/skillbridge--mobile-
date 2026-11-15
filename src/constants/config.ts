@@ -1,4 +1,3 @@
-import { Platform } from 'react-native';
-
-
-export const API_BASE_URL = 'https://skillswap-api-317o.onrender.com';
+export const API_BASE_URL =
+  process.env.EXPO_PUBLIC_API_URL?.replace(/\/+$/, '') ??
+  'https://skillswap-api-317o.onrender.com';

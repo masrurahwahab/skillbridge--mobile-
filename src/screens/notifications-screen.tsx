@@ -17,21 +17,30 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Palette, Spacing } from '@/constants/theme';
 import { notificationsService } from '@/services/notifications.service';
-import type { AppNotification, NotificationFilterKey, NotificationKind } from '@/types';
+import type { AppNotification, NotificationFilterKey } from '@/types';
 import type { NotificationDto } from '@/types/api';
 import { formatRelativeTime } from '@/utils/time';
 
+const NOTIFICATION_TITLES: Record<NotificationDto['type'], string> = {
+  SwapProposed: 'New swap proposal',
+  SwapAccepted: 'Swap accepted',
+  SwapDeclined: 'Swap declined',
+  SwapCompleted: 'Swap completed',
+  NewMessage: 'New message',
+  SessionScheduled: 'Session scheduled',
+  SessionChanged: 'Session updated',
+  ReviewReceived: 'New review',
+};
+
 function toNotification(dto: NotificationDto): AppNotification {
   const isCommunity = dto.type === 'ReviewReceived';
-  let kind: NotificationKind = 'swap';
-  if (isCommunity) kind = 'endorsement';
-  if (dto.type === 'NewMessage' || dto.type.startsWith('Session')) kind = 'session';
+  const isSession = dto.type.startsWith('Session');
 
   return {
     id: String(dto.id),
-    kind,
+    kind: isCommunity ? 'endorsement' : isSession ? 'session' : 'swap',
     category: isCommunity ? 'community' : 'swaps',
-    title: 'SkillBridge',
+    title: NOTIFICATION_TITLES[dto.type],
     timeAgo: formatRelativeTime(dto.createdAt),
     bodyPrefix: dto.text,
     unread: !dto.isRead,

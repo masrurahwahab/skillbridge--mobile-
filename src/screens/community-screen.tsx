@@ -21,47 +21,7 @@ import { Palette, Spacing } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
 import { postsService } from '@/services/posts.service';
 import type { CommunityPostExtended, PostCategory } from '@/types';
-import type { CommunityPostDto } from '@/types/api';
-import { handleForName } from '@/utils/skills';
-import { formatRelativeTime } from '@/utils/time';
-
-const CATEGORY_VALUES: PostCategory[] = [
-  'discussion',
-  'question',
-  'project',
-  'tutorial',
-  'opportunity',
-];
-
-function toPostCategory(value: string): PostCategory {
-  const normalized = value.toLowerCase();
-  return CATEGORY_VALUES.find((category) => category === normalized) ?? 'discussion';
-}
-
-function toCommunityPost(dto: CommunityPostDto, currentUserId?: string): CommunityPostExtended {
-  return {
-    id: dto.id,
-    author: {
-      name: dto.author.name,
-      handle: handleForName(dto.author.name),
-      role: dto.author.location ?? 'Member',
-      avatarUrl: dto.author.avatarUrl ?? '',
-    },
-    timeAgo: formatRelativeTime(dto.createdAt),
-    category: dto.category,
-    postCategory: toPostCategory(dto.category),
-    skillExchange: dto.category,
-    content: dto.content,
-    imageUrl: dto.imageUrl,
-    likes: dto.likesCount,
-    comments: dto.commentsCount,
-    actionLabel: 'Join thread',
-    trending: dto.likesCount >= 20,
-    following: dto.author.id === currentUserId,
-    isLiked: dto.isLikedByMe,
-    saved: false,
-  };
-}
+import { toCommunityPost } from '@/utils/community';
 
 export default function CommunityScreen() {
   const insets = useSafeAreaInsets();
@@ -82,7 +42,7 @@ export default function CommunityScreen() {
         category: selectedCategory === 'all' ? undefined : selectedCategory,
         pageSize: 30,
       });
-      setPosts(res.items.map((dto) => toCommunityPost(dto, user?.id)));
+      setPosts(res.items.map(toCommunityPost));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not load community posts.');
       setPosts([]);
@@ -155,8 +115,12 @@ export default function CommunityScreen() {
     );
   };
 
+  const openThread = (postId: string) => {
+    router.push({ pathname: '/post/[id]', params: { id: postId } });
+  };
+
   const handleAction = (post: CommunityPostExtended) => {
-    Alert.alert('Community thread', post.content);
+    openThread(post.id);
   };
 
   const handlePublish = async (text: string, category: PostCategory) => {
@@ -203,6 +167,7 @@ export default function CommunityScreen() {
               post={item}
               onLike={handleLike}
               onSave={handleSave}
+              onComment={openThread}
               onAction={handleAction}
             />
           )}

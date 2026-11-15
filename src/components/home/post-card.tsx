@@ -14,9 +14,10 @@ type PostCardProps = {
   post: CommunityPost;
   onAction: (post: CommunityPost) => void;
   onLike?: (post: CommunityPost) => void;
+  onComment?: (post: CommunityPost) => void;
 };
 
-export function PostCard({ post, onAction, onLike }: PostCardProps) {
+export function PostCard({ post, onAction, onLike, onComment }: PostCardProps) {
   const [liked, setLiked] = useState(Boolean(post.isLiked));
   const [saved, setSaved] = useState(false);
 
@@ -94,9 +95,7 @@ export function PostCard({ post, onAction, onLike }: PostCardProps) {
             accessibilityRole="button"
             accessibilityLabel="View comments"
             hitSlop={6}
-            onPress={() =>
-              Alert.alert('Comments', 'Comment threads are coming with the Community screen.')
-            }
+            onPress={() => onComment?.(post)}
             style={styles.actionButton}>
             <MessageCircle color={Palette.textMuted} size={18} strokeWidth={2} />
             <AppText variant="caption" color={Palette.textMuted} weight="600">

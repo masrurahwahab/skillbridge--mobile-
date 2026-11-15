@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { CheckCircle2 } from 'lucide-react-native';
+import { CheckCircle2, Star } from 'lucide-react-native';
 import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -450,6 +450,29 @@ export function SwapWorkspaceScreen({ swapId }: SwapWorkspaceScreenProps) {
           </Card>
         ) : null}
 
+        {workspace.swap.status === 'Completed' ? (
+          <Card style={styles.reviewCard}>
+            <View style={styles.reviewIcon}>
+              <Star color={Palette.warning} fill={Palette.warning} size={20} strokeWidth={2} />
+            </View>
+            <View style={styles.reviewCopy}>
+              <AppText variant="subtitle" weight="700">
+                Swap complete
+              </AppText>
+              <AppText variant="bodySmall" color={Palette.textMuted}>
+                Share honest feedback for {workspace.partnerName} and help other learners.
+              </AppText>
+            </View>
+            <Button
+              label="Review your partner"
+              size="sm"
+              onPress={() =>
+                router.push({ pathname: '/impact', params: { swapId: workspace.swap.id } })
+              }
+            />
+          </Card>
+        ) : null}
+
         {isActive ? (
           <>
             <View style={styles.dayDivider}>
@@ -562,6 +585,21 @@ const styles = StyleSheet.create({
   noteCard: {
     gap: 4,
     padding: Spacing.three,
+  },
+  reviewCard: {
+    gap: Spacing.two,
+    padding: Spacing.three,
+  },
+  reviewIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Palette.warningSoft,
+  },
+  reviewCopy: {
+    gap: 2,
   },
   dayDivider: {
     flexDirection: 'row',

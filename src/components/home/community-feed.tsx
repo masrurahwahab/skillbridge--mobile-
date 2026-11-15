@@ -11,9 +11,10 @@ type CommunityFeedProps = {
   posts: CommunityPost[];
   onAction: (post: CommunityPost) => void;
   onLike?: (post: CommunityPost) => void;
+  onComment?: (post: CommunityPost) => void;
 };
 
-export function CommunityFeed({ posts, onAction, onLike }: CommunityFeedProps) {
+export function CommunityFeed({ posts, onAction, onLike, onComment }: CommunityFeedProps) {
   return (
     <View style={styles.section}>
       <View style={styles.header}>
@@ -34,7 +35,13 @@ export function CommunityFeed({ posts, onAction, onLike }: CommunityFeedProps) {
       ) : (
         <View style={styles.posts}>
           {posts.map((post) => (
-            <PostCard key={post.id} post={post} onAction={onAction} onLike={onLike} />
+            <PostCard
+              key={post.id}
+              post={post}
+              onAction={onAction}
+              onLike={onLike}
+              onComment={onComment}
+            />
           ))}
         </View>
       )}

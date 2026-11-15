@@ -107,7 +107,14 @@ export function SearchScreen() {
     router.push({ pathname: '/skill/[id]', params: { id: String(skill.id) } });
   };
   const openMatches = () => router.push('/matches');
-  const openCommunity = () => router.push('/community');
+  const openDiscussion = () => {
+    const post = results?.posts[0];
+    if (post) {
+      router.push({ pathname: '/post/[id]', params: { id: post.id } });
+      return;
+    }
+    router.push('/community');
+  };
   const openPerson = (person: Person) => {
     if (!user) {
       router.push('/welcome');
@@ -156,7 +163,7 @@ export function SearchScreen() {
               <>
                 <RelatedSkillsSection skills={results.skills} onSelect={openSkill} />
                 <MentorsSection people={people} onMatch={openPerson} onSeeAll={openMatches} />
-                <DiscussionSection post={results.posts[0]} onPress={openCommunity} />
+                <DiscussionSection post={results.posts[0]} onPress={openDiscussion} />
                 {results.skills.length === 0 &&
                 people.length === 0 &&
                 results.posts.length === 0 ? (

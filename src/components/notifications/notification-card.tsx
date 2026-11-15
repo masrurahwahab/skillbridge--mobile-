@@ -101,7 +101,7 @@ export function NotificationCard({ notification, onAction }: NotificationCardPro
         {isSwap || isSession ? (
           <View style={styles.actions}>
             <NotificationAction
-              label={isSwap ? 'Open Workspace' : 'Review Proposal'}
+              label={isSwap ? 'Open Workspace' : 'View Session'}
               variant={isSwap ? 'primary' : 'warning'}
               onPress={() => onAction(notification, 'primary')}
             />

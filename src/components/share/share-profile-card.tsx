@@ -11,14 +11,16 @@ type ShareProfileCardProps = {
 };
 
 export function ShareProfileCard({ profile }: ShareProfileCardProps) {
-  const offers = profile.teachSkills
-    .slice(0, 2)
-    .map((skill) => skill.label)
-    .join(' & ');
-  const wants = profile.learnSkills
-    .slice(0, 2)
-    .map((skill) => skill.label)
-    .join(' & ');
+  const offers =
+    profile.teachSkills
+      .slice(0, 2)
+      .map((skill) => skill.label)
+      .join(' & ') || 'Add a skill to teach';
+  const wants =
+    profile.learnSkills
+      .slice(0, 2)
+      .map((skill) => skill.label)
+      .join(' & ') || 'Add a skill to learn';
 
   return (
     <View style={styles.card}>
